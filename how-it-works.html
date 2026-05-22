@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How It Works — NBA Predictor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-nba">NBA</span>
+        <span class="logo-predictor">Predictor</span>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="predict.html" class="nav-link">Predict</a>
+        <a href="player.html" class="nav-link">Player</a>
+        <a href="team-stats.html" class="nav-link">Team Stats</a>
+        <a href="playoff.html" class="nav-link">Playoffs</a>
+        <a href="how-it-works.html" class="nav-link active">How It Works</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="train.html" class="nav-link">Train Model</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle">&#9776;</button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>How It Works</h1>
+    <p>A breakdown of every factor powering the prediction model</p>
+  </section>
+
+  <section class="hiw-section">
+
+    <div class="hiw-intro card">
+      <h2>The Prediction Model</h2>
+      <p>NBA Predictor combines five statistically validated factors into a single win-probability score for each team. Each factor is weighted based on its historical correlation with actual game outcomes. The higher a team scores across all five dimensions, the higher their predicted win probability.</p>
+    </div>
+
+    <div class="factors-grid">
+
+      <div class="factor-card">
+        <div class="factor-weight">30%</div>
+        <h3>Net Rating</h3>
+        <p><strong>What it means:</strong> The difference between how many points a team scores and allows per 100 possessions. A +5.0 net rating means the team outscores opponents by 5 points every 100 possessions.</p>
+        <p><strong>Why it matters:</strong> Net rating is the single best predictor of a team's true strength. It normalises for pace and removes the noise of blowout wins or garbage-time losses. Teams with a higher net rating win more games, plain and simple.</p>
+      </div>
+
+      <div class="factor-card">
+        <div class="factor-weight">25%</div>
+        <h3>Recent Form (Last 10 Games)</h3>
+        <p><strong>What it means:</strong> How many of a team's last 10 games they won. A team going 8-2 in their last 10 is in strong recent form; a team going 2-8 is struggling.</p>
+        <p><strong>Why it matters:</strong> Momentum is real in the NBA. Teams on winning streaks have high confidence, healthy rotations, and well-executed systems. Recent form catches injuries, trades, and hot/cold stretches that season-long averages miss.</p>
+      </div>
+
+      <div class="factor-card">
+        <div class="factor-weight">20%</div>
+        <h3>True Shooting Percentage (TS%)</h3>
+        <p><strong>What it means:</strong> A measure of shooting efficiency that accounts for 2-pointers, 3-pointers, and free throws together. The league average sits around 57%. Above 60% is elite.</p>
+        <p><strong>Why it matters:</strong> Teams that score efficiently create more points from fewer possessions. TS% is a better measure of offensive quality than plain field-goal percentage because it correctly values the 3-point shot and trips to the free throw line.</p>
+      </div>
+
+      <div class="factor-card">
+        <div class="factor-weight">15%</div>
+        <h3>Turnover Rate</h3>
+        <p><strong>What it means:</strong> The percentage of a team's possessions that end in a turnover. A lower number is better — elite teams turn the ball over on fewer than 12% of possessions.</p>
+        <p><strong>Why it matters:</strong> Every turnover is a wasted possession and a transition opportunity for the opponent. Teams that protect the ball consistently give themselves more scoring chances and fewer easy buckets against.</p>
+      </div>
+
+      <div class="factor-card">
+        <div class="factor-weight">10%</div>
+        <h3>Home Court Advantage</h3>
+        <p><strong>What it means:</strong> The home team receives a flat bonus of 3.5 points added to their win-probability score to reflect the statistical edge that playing at home provides.</p>
+        <p><strong>Why it matters:</strong> Home teams win roughly 60% of NBA games historically. Crowd noise, familiar surroundings, no travel fatigue, and favourable referee tendencies all contribute to a measurable and consistent advantage.</p>
+      </div>
+
+    </div>
+
+    <div class="hiw-data card">
+      <h2>Where Does the Data Come From?</h2>
+      <p>All statistics are pulled live from the <strong>BallDontLie API</strong> — a free, comprehensive NBA data source covering every game, player, and team stat since 1946. Every time you make a prediction, the app fetches fresh data directly from their servers so you always get the most current numbers.</p>
+      <p>Data includes: game-by-game results, season-level team statistics (offensive rating, defensive rating, net rating, true shooting %, turnover rate, rebounding %), and head-to-head game history.</p>
+    </div>
+
+    <div class="hiw-confidence card">
+      <h2>Confidence Levels</h2>
+      <div class="confidence-list">
+        <div class="conf-item high">
+          <span class="conf-dot"></span>
+          <div>
+            <strong>High Confidence</strong> — Win probability gap &gt; 20%. One team is clearly superior across multiple dimensions.
+          </div>
+        </div>
+        <div class="conf-item medium">
+          <span class="conf-dot"></span>
+          <div>
+            <strong>Medium Confidence</strong> — Gap between 10–20%. One team has a meaningful edge but the game is competitive.
+          </div>
+        </div>
+        <div class="conf-item low">
+          <span class="conf-dot"></span>
+          <div>
+            <strong>Low Confidence</strong> — Gap under 10%. This is a toss-up game. Either team can realistically win.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 NBA Predictor &mdash; Data by BallDontLie API</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
