@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Lab — HoopHQ</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="HoopHQ home">
+        <img class="logo-mark" src="assets/logo-mark.svg" alt="" width="30" height="30" />
+        <span class="logo-nba">Hoop</span><span class="logo-predictor">HQ</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="predict.html" class="nav-link">Predict</a>
+        <a href="player.html" class="nav-link">Player</a>
+        <a href="team-stats.html" class="nav-link">Team Stats</a>
+        <a href="playoff.html" class="nav-link">Playoffs</a>
+        <a href="how-it-works.html" class="nav-link">How It Works</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="train.html" class="nav-link">Train Model</a>
+        <a href="ai.html" class="nav-link active">AI Lab</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle">&#9776;</button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>AI Lab</h1>
+    <p>Self-improving machine learning predictions — neural network &amp; logistic regression trained on real NBA data</p>
+  </section>
+
+  <section class="ai-section">
+
+    <!-- Toast notification -->
+    <div id="aiToast" class="ai-toast hidden"></div>
+
+    <!-- Model Dashboard -->
+    <div class="card ai-dashboard">
+      <div class="ai-dash-header">
+        <h2>Model Dashboard</h2>
+        <span class="ai-status-dot" id="aiStatusDot"></span>
+      </div>
+      <div class="ai-dash-grid">
+        <div class="ai-dash-stat">
+          <span class="ai-dash-val" id="dashGamesLearned">0</span>
+          <span class="ai-dash-label">Games Learned</span>
+        </div>
+        <div class="ai-dash-stat">
+          <span class="ai-dash-val" id="dashAccuracy">—</span>
+          <span class="ai-dash-label">Game Accuracy</span>
+        </div>
+        <div class="ai-dash-stat">
+          <span class="ai-dash-val" id="dashLastTrain">Never</span>
+          <span class="ai-dash-label">Last Trained</span>
+        </div>
+        <div class="ai-dash-stat">
+          <span class="ai-dash-val" id="dashModelType">None</span>
+          <span class="ai-dash-label">Active Model</span>
+        </div>
+      </div>
+      <div class="ai-dash-chart-wrap">
+        <canvas id="accuracyTrendChart" class="ai-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Data Overview -->
+    <div class="card ai-data-card">
+      <h3>Training Data</h3>
+      <div class="ai-data-grid">
+        <div class="ai-data-item">
+          <span class="ai-data-count" id="dataESPNCount">0</span>
+          <span class="ai-data-label">ESPN Games</span>
+        </div>
+        <div class="ai-data-item">
+          <span class="ai-data-count" id="dataH2HCount">56</span>
+          <span class="ai-data-label">H2H Games</span>
+        </div>
+        <div class="ai-data-item">
+          <span class="ai-data-count" id="dataImportCount">0</span>
+          <span class="ai-data-label">Imported Games</span>
+        </div>
+        <div class="ai-data-item">
+          <span class="ai-data-count" id="dataPlayerCount">0</span>
+          <span class="ai-data-label">Players</span>
+        </div>
+        <div class="ai-data-item">
+          <span class="ai-data-count" id="dataTotalCount">0</span>
+          <span class="ai-data-label">Total Samples</span>
+        </div>
+      </div>
+      <div class="ai-collect-controls">
+        <div class="ai-collect-row">
+          <div class="ai-collect-dates">
+            <div class="form-group">
+              <label>From</label>
+              <input type="date" id="collectFrom" class="score-input" value="2025-10-22" />
+            </div>
+            <div class="form-group">
+              <label>To</label>
+              <input type="date" id="collectTo" class="score-input" />
+            </div>
+          </div>
+          <div class="ai-collect-btns">
+            <button id="collectESPNBtn" class="btn-primary">Collect Games</button>
+            <button id="collectFullSeasonBtn" class="btn-secondary">Full Season</button>
+            <button id="collectPlayoffsBtn" class="btn-secondary">Playoffs Only</button>
+            <button id="collectLast30Btn" class="btn-secondary">Last 30 Days</button>
+            <button id="collectBDLBtn" class="btn-secondary" title="Pulls every game of the 2024-25 + 2025-26 seasons from BallDontLie — most reliable if ESPN returns nothing.">Collect from BallDontLie</button>
+          </div>
+        </div>
+        <div id="collectProgress" class="ai-collect-progress hidden">
+          <div class="ai-progress-bar"><div class="ai-progress-fill" id="collectProgressFill"></div></div>
+          <div class="ai-epoch-counter" id="collectProgressText">Collecting...</div>
+        </div>
+      </div>
+      <div class="ai-data-actions" style="margin-top:10px">
+        <button id="generateSyntheticBtn" class="btn-secondary">Generate Synthetic Data</button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="ai-tabs">
+      <button class="ai-tab-btn active" data-tab="game">Game Prediction</button>
+      <button class="ai-tab-btn" data-tab="player">Player Points</button>
+      <button class="ai-tab-btn" data-tab="series">Series Prediction</button>
+    </div>
+
+    <!-- ═══ GAME TAB ═══ -->
+    <div class="ai-tab-content" id="tabGame">
+
+      <div class="card ai-train-card">
+        <h3>Train Game Prediction Models</h3>
+        <div class="ai-hyperparam-row">
+          <div class="ai-hyperparam">
+            <label>Learning Rate</label>
+            <input type="number" id="gameLR" value="0.01" step="0.001" min="0.001" max="0.1" />
+          </div>
+          <div class="ai-hyperparam">
+            <label>Epochs</label>
+            <input type="number" id="gameEpochs" value="50" step="10" min="10" max="500" />
+          </div>
+          <div class="ai-hyperparam">
+            <label>Batch Size</label>
+            <input type="number" id="gameBatch" value="32" step="8" min="8" max="128" />
+          </div>
+        </div>
+        <div class="ai-train-btns">
+          <button id="trainGameNNBtn" class="btn-primary">Train Neural Network</button>
+          <button id="trainGameLRBtn" class="btn-secondary">Train Logistic Regression</button>
+          <button id="trainGameBothBtn" class="btn-secondary">Train Both</button>
+        </div>
+        <div id="gameTrainProgress" class="ai-progress-wrap hidden">
+          <div class="ai-progress-bar"><div class="ai-progress-fill" id="gameProgressFill"></div></div>
+          <div class="ai-epoch-counter" id="gameEpochText">Epoch 0 / 50</div>
+        </div>
+        <div class="ai-chart-row">
+          <div class="ai-chart-box">
+            <h4>Training Loss</h4>
+            <canvas id="gameLossChart" class="ai-canvas"></canvas>
+          </div>
+          <div class="ai-chart-box">
+            <h4>Model Accuracy Comparison</h4>
+            <canvas id="gameAccChart" class="ai-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Your Model -->
+      <div class="card ai-predict-card">
+        <h3>Test Your Model</h3>
+        <p class="ai-test-desc">Enter a real game and the actual winner to see if the AI got it right.</p>
+        <div class="ai-predict-inputs">
+          <div class="form-group">
+            <label>Home Team</label>
+            <select id="aiGameHome" class="team-select"></select>
+          </div>
+          <span class="ai-vs">vs</span>
+          <div class="form-group">
+            <label>Away Team</label>
+            <select id="aiGameAway" class="team-select"></select>
+          </div>
+          <div class="form-group">
+            <label>Who Actually Won?</label>
+            <select id="aiGameActual" class="team-select">
+              <option value="">-- Select Winner --</option>
+              <option value="home">Home Team Won</option>
+              <option value="away">Away Team Won</option>
+            </select>
+          </div>
+          <button id="aiGamePredictBtn" class="btn-primary">Check Prediction</button>
+        </div>
+        <div id="aiGameResults" class="ai-compare-grid hidden">
+          <div class="ai-compare-col">
+            <div class="ai-compare-label">Formula</div>
+            <div class="ai-compare-val" id="aiGameFormula">—</div>
+            <div class="ai-verdict" id="aiGameFormulaVerdict"></div>
+          </div>
+          <div class="ai-compare-col ai-compare-lr">
+            <div class="ai-compare-label">Logistic Regression</div>
+            <div class="ai-compare-val" id="aiGameLR">—</div>
+            <div class="ai-verdict" id="aiGameLRVerdict"></div>
+          </div>
+          <div class="ai-compare-col ai-compare-nn">
+            <div class="ai-compare-label">Neural Network</div>
+            <div class="ai-compare-val" id="aiGameNN">—</div>
+            <div class="ai-verdict" id="aiGameNNVerdict"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Running Test Results -->
+      <div class="card ai-test-log-card">
+        <div class="ai-test-log-header">
+          <h3>Test Results Log</h3>
+          <div class="ai-test-score" id="aiTestScore">0 / 0 correct</div>
+        </div>
+        <div class="ai-test-accuracy-row">
+          <div class="ai-test-acc-item">
+            <span class="ai-test-acc-label">Formula</span>
+            <span class="ai-test-acc-val" id="testAccFormula">—</span>
+          </div>
+          <div class="ai-test-acc-item">
+            <span class="ai-test-acc-label">LR</span>
+            <span class="ai-test-acc-val" id="testAccLR">—</span>
+          </div>
+          <div class="ai-test-acc-item">
+            <span class="ai-test-acc-label">NN</span>
+            <span class="ai-test-acc-val" id="testAccNN">—</span>
+          </div>
+        </div>
+        <div id="aiTestLog" class="ai-test-log">
+          <div class="ai-test-empty">No games tested yet. Enter a game above to start testing.</div>
+        </div>
+        <button id="clearTestLogBtn" class="btn-secondary" style="margin-top:12px">Clear Test Log</button>
+      </div>
+    </div>
+
+    <!-- ═══ PLAYER TAB ═══ -->
+    <div class="ai-tab-content hidden" id="tabPlayer">
+
+      <div class="card ai-train-card">
+        <h3>Train Player Points Models</h3>
+        <div class="ai-hyperparam-row">
+          <div class="ai-hyperparam">
+            <label>Learning Rate</label>
+            <input type="number" id="playerLR" value="0.005" step="0.001" min="0.001" max="0.1" />
+          </div>
+          <div class="ai-hyperparam">
+            <label>Epochs</label>
+            <input type="number" id="playerEpochs" value="80" step="10" min="10" max="500" />
+          </div>
+        </div>
+        <div class="ai-train-btns">
+          <button id="trainPlayerNNBtn" class="btn-primary">Train Neural Network</button>
+          <button id="trainPlayerLRBtn" class="btn-secondary">Train Linear Regression</button>
+          <button id="trainPlayerBothBtn" class="btn-secondary">Train Both</button>
+        </div>
+        <div id="playerTrainProgress" class="ai-progress-wrap hidden">
+          <div class="ai-progress-bar"><div class="ai-progress-fill" id="playerProgressFill"></div></div>
+          <div class="ai-epoch-counter" id="playerEpochText">Epoch 0 / 80</div>
+        </div>
+        <div class="ai-chart-row">
+          <div class="ai-chart-box"><h4>Training Loss</h4><canvas id="playerLossChart" class="ai-canvas"></canvas></div>
+          <div class="ai-chart-box"><h4>Model Accuracy (MAE)</h4><canvas id="playerAccChart" class="ai-canvas"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card ai-predict-card">
+        <h3>Test Player Prediction</h3>
+        <div class="ai-predict-inputs">
+          <div class="form-group">
+            <label>Player</label>
+            <select id="aiPlayerSelect" class="team-select"></select>
+          </div>
+          <div class="form-group">
+            <label>Opponent</label>
+            <select id="aiPlayerOpp" class="team-select"></select>
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <select id="aiPlayerLoc" class="team-select">
+              <option value="1">Home</option>
+              <option value="0">Away</option>
+            </select>
+          </div>
+          <button id="aiPlayerPredictBtn" class="btn-primary">Predict</button>
+        </div>
+        <div id="aiPlayerResults" class="ai-compare-grid hidden">
+          <div class="ai-compare-col">
+            <div class="ai-compare-label">Formula</div>
+            <div class="ai-compare-val" id="aiPlayerFormula">—</div>
+          </div>
+          <div class="ai-compare-col ai-compare-lr">
+            <div class="ai-compare-label">Linear Regression</div>
+            <div class="ai-compare-val" id="aiPlayerLRVal">—</div>
+          </div>
+          <div class="ai-compare-col ai-compare-nn">
+            <div class="ai-compare-label">Neural Network</div>
+            <div class="ai-compare-val" id="aiPlayerNNVal">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SERIES TAB ═══ -->
+    <div class="ai-tab-content hidden" id="tabSeries">
+
+      <div class="card ai-train-card">
+        <h3>Train Series Prediction Models</h3>
+        <div class="ai-hyperparam-row">
+          <div class="ai-hyperparam">
+            <label>Learning Rate</label>
+            <input type="number" id="seriesLR" value="0.01" step="0.001" min="0.001" max="0.1" />
+          </div>
+          <div class="ai-hyperparam">
+            <label>Epochs</label>
+            <input type="number" id="seriesEpochs" value="60" step="10" min="10" max="500" />
+          </div>
+        </div>
+        <div class="ai-train-btns">
+          <button id="trainSeriesNNBtn" class="btn-primary">Train Neural Network</button>
+          <button id="trainSeriesLRBtn" class="btn-secondary">Train Logistic Regression</button>
+          <button id="trainSeriesBothBtn" class="btn-secondary">Train Both</button>
+        </div>
+        <div id="seriesTrainProgress" class="ai-progress-wrap hidden">
+          <div class="ai-progress-bar"><div class="ai-progress-fill" id="seriesProgressFill"></div></div>
+          <div class="ai-epoch-counter" id="seriesEpochText">Epoch 0 / 60</div>
+        </div>
+        <div class="ai-chart-row">
+          <div class="ai-chart-box"><h4>Training Loss</h4><canvas id="seriesLossChart" class="ai-canvas"></canvas></div>
+          <div class="ai-chart-box"><h4>Model Accuracy</h4><canvas id="seriesAccChart" class="ai-canvas"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card ai-predict-card">
+        <h3>Test Series Prediction</h3>
+        <div class="ai-predict-inputs">
+          <div class="form-group">
+            <label>Team 1</label>
+            <select id="aiSeriesT1" class="team-select"></select>
+          </div>
+          <span class="ai-vs">vs</span>
+          <div class="form-group">
+            <label>Team 2</label>
+            <select id="aiSeriesT2" class="team-select"></select>
+          </div>
+          <div class="form-group">
+            <label>Current Score</label>
+            <input type="text" id="aiSeriesScore" class="score-input" placeholder="0-0" value="0-0" style="width:70px" />
+          </div>
+          <button id="aiSeriesPredictBtn" class="btn-primary">Predict</button>
+        </div>
+        <div id="aiSeriesResults" class="ai-compare-grid hidden">
+          <div class="ai-compare-col">
+            <div class="ai-compare-label">Formula</div>
+            <div class="ai-compare-val" id="aiSeriesFormula">—</div>
+          </div>
+          <div class="ai-compare-col ai-compare-lr">
+            <div class="ai-compare-label">Logistic Regression</div>
+            <div class="ai-compare-val" id="aiSeriesLRVal">—</div>
+          </div>
+          <div class="ai-compare-col ai-compare-nn">
+            <div class="ai-compare-label">Neural Network</div>
+            <div class="ai-compare-val" id="aiSeriesNNVal">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Management -->
+    <div class="card ai-manage-card">
+      <h3>Model Management</h3>
+      <div class="ai-manage-btns">
+        <button id="resetModelsBtn" class="btn-secondary">Reset All Models</button>
+        <button id="resetDataBtn" class="btn-secondary">Clear Training Data</button>
+        <button id="forceRetrainBtn" class="btn-primary">Force Retrain All</button>
+      </div>
+      <div id="aiManageStatus" class="ai-manage-status"></div>
+    </div>
+
+  </section>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 HoopHQ &middot; AI-Powered Predictions</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0"></script>
+  <script src="script.js"></script>
+</body>
+</html>

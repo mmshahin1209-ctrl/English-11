@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predict — HoopHQ</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="HoopHQ home">
+        <img class="logo-mark" src="assets/logo-mark.svg" alt="" width="30" height="30" />
+        <span class="logo-nba">Hoop</span><span class="logo-predictor">HQ</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="predict.html" class="nav-link active">Predict</a>
+        <a href="player.html" class="nav-link">Player</a>
+        <a href="team-stats.html" class="nav-link">Team Stats</a>
+        <a href="playoff.html" class="nav-link">Playoffs</a>
+        <a href="how-it-works.html" class="nav-link">How It Works</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="train.html" class="nav-link">Train Model</a>
+        <a href="ai.html" class="nav-link">AI Lab</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle">&#9776;</button>
+    </div>
+  </header>
+
+  <section class="predict-hero">
+    <span class="hq-eyebrow">Matchup forecast</span>
+    <h1>Game predictor</h1>
+    <p>Pick two teams to see who HoopHQ favors — and why.</p>
+  </section>
+
+  <section class="predict-section">
+    <div class="team-selectors">
+      <div class="selector-card">
+        <label>Home Team</label>
+        <select id="homeTeam" class="team-select">
+          <option value="">-- Select Home Team --</option>
+        </select>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="selector-card">
+        <label>Away Team</label>
+        <select id="awayTeam" class="team-select">
+          <option value="">-- Select Away Team --</option>
+        </select>
+      </div>
+      <div class="selector-card selector-date">
+        <label>Game Date</label>
+        <input type="date" id="gameDate" class="team-select" />
+      </div>
+    </div>
+
+    <div id="predictLoader" class="loader-wrap hidden">
+      <div class="spinner"></div><p>Fetching live data…</p>
+    </div>
+
+    <div id="predictError" class="error-box hidden"></div>
+
+    <div id="predictResults" class="predict-results hidden">
+
+      <div class="winner-banner" id="winnerBanner"></div>
+
+      <div class="prob-bars-wrap">
+        <div class="prob-team" id="homeProb"></div>
+        <div class="prob-team" id="awayProb"></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card" id="formCard">
+          <h3>Last 10 Games Form</h3>
+          <div class="form-dots-wrap">
+            <div>
+              <span class="form-label" id="homeFormLabel"></span>
+              <div class="form-dots" id="homeForm"></div>
+            </div>
+            <div>
+              <span class="form-label" id="awayFormLabel"></span>
+              <div class="form-dots" id="awayForm"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card" id="h2hCard">
+          <h3>Head to Head</h3>
+          <div class="h2h-record" id="h2hRecord"></div>
+        </div>
+
+        <div class="stat-card">
+          <h3>Top 3 Predictive Factors</h3>
+          <div id="topFactors"></div>
+        </div>
+
+        <div class="stat-card">
+          <h3>Predicted Final Score</h3>
+          <div class="predicted-score" id="predictedScore"></div>
+        </div>
+      </div>
+
+      <!-- AI Model Prediction (shown when trained) -->
+      <div id="aiPredictionSection" class="ai-prediction-section hidden">
+        <h3 class="section-label">AI Model Prediction <span class="ai-badge">AI-Powered</span></h3>
+        <div class="ai-pred-compare">
+          <div class="ai-pred-card" id="aiPredLR">
+            <div class="ai-pred-label">Logistic Regression</div>
+            <div class="ai-pred-result" id="aiPredLRResult">Not trained</div>
+          </div>
+          <div class="ai-pred-card" id="aiPredNN">
+            <div class="ai-pred-label">Neural Network</div>
+            <div class="ai-pred-result" id="aiPredNNResult">Not trained</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analysis-card">
+        <h3>Analysis</h3>
+        <p id="analysisText"></p>
+      </div>
+
+      <div class="confidence-badge-wrap">
+        <span id="confidenceBadge" class="confidence-badge"></span>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 HoopHQ &middot; Data by BallDontLie &amp; ESPN</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0"></script>
+  <script src="script.js"></script>
+</body>
+</html>

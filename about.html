@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — HoopHQ</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="HoopHQ home">
+        <img class="logo-mark" src="assets/logo-mark.svg" alt="" width="30" height="30" />
+        <span class="logo-nba">Hoop</span><span class="logo-predictor">HQ</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="predict.html" class="nav-link">Predict</a>
+        <a href="player.html" class="nav-link">Player</a>
+        <a href="team-stats.html" class="nav-link">Team Stats</a>
+        <a href="playoff.html" class="nav-link">Playoffs</a>
+        <a href="how-it-works.html" class="nav-link">How It Works</a>
+        <a href="about.html" class="nav-link active">About</a>
+        <a href="train.html" class="nav-link">Train Model</a>
+        <a href="ai.html" class="nav-link">AI Lab</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle">&#9776;</button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>About NBA Predictor</h1>
+    <p>The project, the tools, and the story behind it</p>
+  </section>
+
+  <section class="about-section">
+
+    <div class="about-card card">
+      <h2>What Is NBA Predictor?</h2>
+      <p>NBA Predictor is a data-driven web application that calculates win probabilities for any NBA matchup using real, live statistics. Select any two teams, and the app instantly fetches their current season data — net rating, recent form, true shooting percentage, turnover rate, and home-court advantage — then runs them through a weighted prediction model to tell you who is most likely to win and why.</p>
+      <p>The goal was to build something that feels like a professional sports analytics tool but runs entirely in the browser with zero backend required. No servers, no databases, no subscriptions — just pure HTML, CSS, and JavaScript connected to a real NBA data API.</p>
+    </div>
+
+    <div class="about-card card">
+      <h2>Tools &amp; Technologies</h2>
+      <div class="tools-grid">
+        <div class="tool-item">
+          <div class="tool-icon">&#127944;</div>
+          <div>
+            <strong>BallDontLie API</strong>
+            <p>A comprehensive, free NBA statistics API covering every game, player, and team since 1946. Provides all the raw data powering the predictions — game results, season averages, head-to-head history, and more.</p>
+          </div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-icon">&#128196;</div>
+          <div>
+            <strong>HTML5 / CSS3 / JavaScript</strong>
+            <p>The entire application is built with plain web technologies — no frameworks, no build tools, no dependencies. Just three files that work in any modern browser.</p>
+          </div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-icon">&#128279;</div>
+          <div>
+            <strong>GitHub Pages</strong>
+            <p>Deployed and hosted for free on GitHub Pages. Because there is no backend, the site is a pure static deployment — push to a repo and it's live instantly.</p>
+          </div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-icon">&#128200;</div>
+          <div>
+            <strong>Fetch API</strong>
+            <p>All API calls use the native browser Fetch API — no axios, no jQuery. Clean async/await requests with full error handling built in.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-card card">
+      <h2>How Predictions Are Generated</h2>
+      <p>The prediction engine is a weighted scoring model inspired by modern sports analytics. Each team receives a score out of 100 based on five factors: net rating (30%), recent form (25%), true shooting percentage (20%), turnover rate (15%), and home-court advantage (10%). The two scores are normalised into win probability percentages that always add up to 100%.</p>
+      <p>The written analysis is generated automatically in JavaScript — not by an external AI API. The engine reads the actual stat values and constructs a contextual explanation of why the predicted winner has the edge, referencing specific numbers to make the insight actionable and readable.</p>
+    </div>
+
+    <div class="about-card card">
+      <h2>Creator</h2>
+      <p>Built as a personal project to explore sports analytics, browser-based data visualisation, and real-time API integration. NBA Predictor demonstrates that a sophisticated analytics tool can be built entirely with vanilla web technologies and a great free data source.</p>
+      <p>If you have feedback, suggestions, or want to contribute, feel free to open an issue or pull request on the GitHub repository.</p>
+    </div>
+
+  </section>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 HoopHQ &middot; Data by BallDontLie &amp; ESPN</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

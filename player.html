@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Player Predictor — HoopHQ</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="HoopHQ home">
+        <img class="logo-mark" src="assets/logo-mark.svg" alt="" width="30" height="30" />
+        <span class="logo-nba">Hoop</span><span class="logo-predictor">HQ</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="predict.html" class="nav-link">Predict</a>
+        <a href="player.html" class="nav-link active">Player</a>
+        <a href="team-stats.html" class="nav-link">Team Stats</a>
+        <a href="playoff.html" class="nav-link">Playoffs</a>
+        <a href="how-it-works.html" class="nav-link">How It Works</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="train.html" class="nav-link">Train Model</a>
+        <a href="ai.html" class="nav-link">AI Lab</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle">&#9776;</button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>Player Points Predictor</h1>
+    <p>Predict how many points any NBA player will score in their next game</p>
+  </section>
+
+  <section class="player-section">
+
+    <div class="card player-search-card">
+      <div class="player-inputs">
+        <div class="form-group">
+          <label>Player Name</label>
+          <div class="search-input-wrap" id="playerSearchWrap">
+            <input type="text" id="playerSearch" class="score-input" placeholder="Type a player name…" autocomplete="off" />
+            <div id="playerDropdown" class="search-dropdown hidden"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Opponent Team</label>
+          <select id="opponentTeam" class="team-select">
+            <option value="">-- Select Opponent --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Game Location</label>
+          <select id="gameLocation" class="team-select">
+            <option value="home">Home Game</option>
+            <option value="away">Away Game</option>
+          </select>
+        </div>
+      </div>
+      <p id="playerHint" class="bulk-hint" style="margin-top:14px;text-align:center">
+        Search for a player, select an opponent, and choose home or away to generate a prediction.
+      </p>
+    </div>
+
+    <div id="playerLoader" class="loader-wrap hidden">
+      <div class="spinner"></div><p>Fetching player data…</p>
+    </div>
+    <div id="playerError" class="error-box hidden"></div>
+
+    <div id="playerResults" class="hidden">
+
+      <!-- Header card: identity + prediction hero -->
+      <div class="card player-header-card">
+        <div class="player-identity">
+          <div class="player-initials" id="playerInitials"></div>
+          <div>
+            <h2 id="playerFullName" class="player-name-display"></h2>
+            <p id="playerMeta" class="player-meta-line"></p>
+          </div>
+        </div>
+        <div class="prediction-hero">
+          <div class="pred-label">Predicted Points</div>
+          <div class="pred-number" id="predictedPts">—</div>
+          <div class="pred-range" id="predictedRange"></div>
+          <span class="confidence-badge" id="playerConfidence"></span>
+        </div>
+      </div>
+
+      <!-- Factor breakdown + season stats -->
+      <div class="player-stats-grid">
+        <div class="stat-card">
+          <h3>Prediction Factors</h3>
+          <div class="factor-row">
+            <span class="factor-name">Season Average <span style="color:var(--muted)">(20%)</span></span>
+            <span class="factor-val" id="factorSeason">—</span>
+          </div>
+          <div class="factor-row">
+            <span class="factor-name">Home / Away Average <span style="color:var(--muted)">(20%)</span></span>
+            <span class="factor-val" id="factorLocation">—</span>
+          </div>
+          <div class="factor-row">
+            <span class="factor-name">Last 10 Games Form <span style="color:var(--muted)">(25%)</span></span>
+            <span class="factor-val" id="factorRecent">—</span>
+          </div>
+          <div class="factor-row">
+            <span class="factor-name">vs Opponent (All Games) <span style="color:var(--muted)">(20%)</span></span>
+            <span class="factor-val" id="factorOpp">—</span>
+          </div>
+          <div class="factor-row">
+            <span class="factor-name">vs Opp at This Location <span style="color:var(--muted)">(15%)</span></span>
+            <span class="factor-val" id="factorOppLoc">—</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <h3>Season Stats</h3>
+          <div class="factor-row"><span class="factor-name">Points Per Game</span><span class="factor-val" id="statPpg">—</span></div>
+          <div class="factor-row"><span class="factor-name">Home PPG</span><span class="factor-val" id="statHomePpg">—</span></div>
+          <div class="factor-row"><span class="factor-name">Away PPG</span><span class="factor-val" id="statAwayPpg">—</span></div>
+          <div class="factor-row"><span class="factor-name">Minutes Per Game</span><span class="factor-val" id="statMpg">—</span></div>
+          <div class="factor-row"><span class="factor-name">Field Goal %</span><span class="factor-val" id="statFg">—</span></div>
+          <div class="factor-row"><span class="factor-name">3-Point %</span><span class="factor-val" id="statFg3">—</span></div>
+          <div class="factor-row"><span class="factor-name">Free Throw %</span><span class="factor-val" id="statFt">—</span></div>
+          <div class="factor-row"><span class="factor-name">Games Played</span><span class="factor-val" id="statGp">—</span></div>
+        </div>
+      </div>
+
+      <!-- Canvas chart -->
+      <div class="card chart-card">
+        <h3>Last 10 Games Scoring</h3>
+        <div class="canvas-wrap">
+          <canvas id="scoreChart" class="score-canvas"></canvas>
+        </div>
+        <div class="chart-legend">
+          <span class="cl-item"><span class="cl-swatch" style="background:#cc0000"></span>Above Average</span>
+          <span class="cl-item"><span class="cl-swatch" style="background:#444"></span>Below Average</span>
+          <span class="cl-item"><span class="cl-line"></span>Season Avg</span>
+        </div>
+      </div>
+
+      <!-- Best/worst + vs opponent -->
+      <div class="player-stats-grid">
+        <div class="stat-card">
+          <h3>Season Highlights</h3>
+          <div class="factor-row"><span class="factor-name">Best Game</span><span class="factor-val green-val" id="bestGame">—</span></div>
+          <div class="factor-row"><span class="factor-name">Worst Game</span><span class="factor-val red-val" id="worstGame">—</span></div>
+          <div class="factor-row"><span class="factor-name">20+ Point Games</span><span class="factor-val" id="twentyPlus">—</span></div>
+          <div class="factor-row"><span class="factor-name">30+ Point Games</span><span class="factor-val" id="thirtyPlus">—</span></div>
+          <div class="factor-row"><span class="factor-name">Scoring Consistency</span><span class="factor-val" id="consistency">—</span></div>
+        </div>
+
+        <div class="stat-card">
+          <h3>vs <span id="vsOppName">Opponent</span> This Season</h3>
+          <div class="factor-row"><span class="factor-name">Games Played</span><span class="factor-val" id="vsGames">—</span></div>
+          <div class="factor-row"><span class="factor-name">Average Points</span><span class="factor-val" id="vsAvg">—</span></div>
+          <div class="factor-row"><span class="factor-name" id="vsAtLocLabel">Avg at Location</span><span class="factor-val" id="vsAtLoc">—</span></div>
+          <div class="factor-row"><span class="factor-name">Best vs Opponent</span><span class="factor-val green-val" id="vsBest">—</span></div>
+          <div class="factor-row"><span class="factor-name">Worst vs Opponent</span><span class="factor-val red-val" id="vsWorst">—</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 HoopHQ &middot; Data by BallDontLie &amp; ESPN</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

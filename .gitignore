@@ -1,0 +1,17 @@
+# Claude Code local config (IDE-specific, not part of the site)
+.claude/
+
+# HoopHQ design system reference bundle — kept locally for context
+_design-ref/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+
+# Optional: if you ever add a backend with env vars
+.env
+.env.local
